@@ -131,14 +131,24 @@
     }
 
     htmx.on("htmx:afterRequest", function(evt) {
-        if (evt.detail.xhr.getResponseHeader('HX-Refresh') === 'true' ||
-            evt.detail.xhr.getResponseHeader('HX-Trigger'))
-        {
+        const xhr = evt.detail.xhr;
+        const hasRefresh = xhr.getResponseHeader('HX-Refresh') === 'true';
+        const hasTrigger = xhr.getResponseHeader('HX-Trigger');
+        const hasRedirect = xhr.getResponseHeader('HX-Redirect');
+
+        if (hasRefresh || hasTrigger || hasRedirect) {
+            return;
+        }
+
+        const contentType = xhr.getResponseHeader('Content-Type') || '';
+        const responseText = (xhr.responseText || xhr.response || '').trim();
+
+        if (responseText === '' || !contentType.includes('application/json')) {
             return;
         }
 
         try {
-            let res = JSON.parse(evt.detail.xhr.response);
+            let res = JSON.parse(responseText);
 
             if (typeof res.data !== 'undefined') {
                 // Update DOM elements with response data
