@@ -60,6 +60,11 @@ final class UserController extends BaseController
             $r2Enabled
         );
 
+        // 获取当前用户在线IP列表
+        $online_ips = (new \App\Models\OnlineLog())->where('user_id', $this->user->id)
+            ->orderBy('last_time', 'desc')
+            ->get();
+
         return $response->write(
             $this->view()
                 ->assign('ann', $ann)
@@ -73,6 +78,7 @@ final class UserController extends BaseController
                 ->assign('user_money', $this->user->money)
                 ->assign('ip_limit', $this->user->node_iplimit)
                 ->assign('speed_limit', $this->user->node_speedlimit)
+                ->assign('online_ips', $online_ips)
                 ->fetch('user/index.tpl')
         );
     }
