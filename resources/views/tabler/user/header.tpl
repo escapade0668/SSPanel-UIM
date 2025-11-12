@@ -216,6 +216,16 @@
                                 </div>
                             </div>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://doc-burst.xjj.jp/" target="_blank">
+                                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                    <i class="ti ti-book icon"></i>
+                                </span>
+                                <span class="nav-link-title">
+                                    使用文档
+                                </span>
+                            </a>
+                        </li>
                         {if $user->is_admin}
                             <li class="nav-item">
                                 <a class="nav-link" href="/admin">
