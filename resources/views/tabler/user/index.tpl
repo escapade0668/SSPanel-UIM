@@ -332,13 +332,61 @@
                             </div>
                         </div>
                         {if $public_setting['traffic_log']}
-                        <div class="card my-3 mb-0">
+                        <div class="card my-3">
                             <div class="card-body">
                                 <h3 class="card-title">每小时用量</h3>
                                 <div id="traffic-log"></div>
                             </div>
                         </div>
                         {/if}
+                        <div class="card mb-0">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="ti ti-device-desktop"></i>
+                                    在线IP列表
+                                </h3>
+                            </div>
+                            <div class="card-body">
+                                {if $online_ips && count($online_ips) > 0}
+                                <div class="table-responsive">
+                                    <table class="table table-vcenter card-table">
+                                        <thead>
+                                            <tr>
+                                                <th>IP地址</th>
+                                                <th>节点</th>
+                                                <th>最后在线</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {foreach $online_ips as $online_ip}
+                                            <tr>
+                                                <td>
+                                                    <code>{$online_ip->ip()}</code>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-blue-lt">{$online_ip->nodeName()}</span>
+                                                </td>
+                                                <td class="text-secondary">
+                                                    <span class="text-nowrap">{date('Y-m-d H:i:s', $online_ip->last_time)}</span>
+                                                </td>
+                                            </tr>
+                                            {/foreach}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {else}
+                                <div class="empty">
+                                    <div class="empty-icon">
+                                        <i class="ti ti-mood-sad icon"></i>
+                                    </div>
+                                    <p class="empty-title">暂无在线记录</p>
+                                    <p class="empty-subtitle text-secondary">
+                                        当您使用节点连接时，这里将显示您的在线IP
+                                    </p>
+                                </div>
+                                {/if}
+                            </div>
+                        </div>
                     </div>
                 </div>
                 {if $public_setting['enable_checkin']}
