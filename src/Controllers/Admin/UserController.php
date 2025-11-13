@@ -7,6 +7,7 @@ namespace App\Controllers\Admin;
 use App\Controllers\AuthController;
 use App\Controllers\BaseController;
 use App\Models\Config;
+use App\Models\MFADevice;
 use App\Models\User;
 use App\Models\UserMoneyLog;
 use App\Services\I18n;
@@ -160,6 +161,8 @@ final class UserController extends BaseController
         $user->last_use_time = Tools::toDateTime($user->last_use_time);
         $user->last_check_in_time = Tools::toDateTime($user->last_check_in_time);
         $user->last_login_time = Tools::toDateTime($user->last_login_time);
+        
+        $mfa_devices = (new MFADevice())->where('userid', $user->id)->get();
 
         return $response->write(
             $this->view()
@@ -167,6 +170,7 @@ final class UserController extends BaseController
                 ->assign('edit_user', $user)
                 ->assign('ss_methods', Tools::getSsMethod())
                 ->assign('locales', I18n::getLocaleList())
+                ->assign('mfa_devices', $mfa_devices)
                 ->fetch('admin/user/edit.tpl')
         );
     }
@@ -263,6 +267,31 @@ final class UserController extends BaseController
 
         return $response->withJson([
             'users' => $users,
+        ]);
+    }
+
+    public function deleteMFADevice(ServerRequest $request, Response $response, array $args): ResponseInterface
+    {
+        $device_id = $args['device_id'];
+        $device = (new MFADevice())->find((int) $device_id);
+
+        if ($device === null) {
+            return $response->withJson([
+                'ret' => 0,
+                'msg' => 'MFA设备不存在',
+            ]);
+        }
+
+        if (! $device->delete()) {
+            return $response->withJson([
+                'ret' => 0,
+                'msg' => '删除失败',
+            ]);
+        }
+
+        return $response->withJson([
+            'ret' => 1,
+            'msg' => '删除成功',
         ]);
     }
 }
