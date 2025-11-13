@@ -241,15 +241,13 @@
                             <div class="form-group mb-3 col-12">
                                 <span class="form-label col-12 col-form-label">手动封禁理由</span>
                                 <span class="col-auto">
-                                    <textarea id="banned_reason" class="form-control"
-                                              value="{$edit_user->banned_reason}"></textarea>
+                                    <textarea id="banned_reason" class="form-control">{$edit_user->banned_reason}</textarea>
                                 </span>
                             </div>
                             <div class="form-group mb-3 col-12">
                                 <label class="form-label col-12 col-form-label">账户备注</label>
                                 <div class="col">
-                                    <textarea id="remark" class="form-control" value="{$edit_user->remark}"
-                                              placeholder="仅管理员可见"></textarea>
+                                    <textarea id="remark" class="form-control" placeholder="仅管理员可见">{$edit_user->remark}</textarea>
                                 </div>
                             </div>
                         </div>
