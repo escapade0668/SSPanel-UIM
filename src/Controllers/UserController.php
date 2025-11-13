@@ -60,10 +60,17 @@ final class UserController extends BaseController
             $r2Enabled
         );
 
-        // 获取当前用户在线IP列表
+        // 获取当前用户在线IP列表（仅显示90秒内活跃的连接）
         $online_ips = (new \App\Models\OnlineLog())->where('user_id', $this->user->id)
+            ->where('last_time', '>', time() - 90)
             ->orderBy('last_time', 'desc')
             ->get();
+
+        foreach ($online_ips as $online_ip) {
+            $online_ip->node_name = $online_ip->nodeName();
+            $online_ip->formatted_ip = $online_ip->ip();
+            $online_ip->formatted_time = Tools::toDateTime($online_ip->last_time);
+        }
 
         return $response->write(
             $this->view()

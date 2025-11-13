@@ -345,6 +345,9 @@
                                     <i class="ti ti-device-desktop"></i>
                                     在线IP列表
                                 </h3>
+                                <div class="card-subtitle">
+                                    <small class="text-secondary">仅显示90秒内活跃的连接</small>
+                                </div>
                             </div>
                             <div class="card-body">
                                 {if $online_ips && count($online_ips) > 0}
@@ -361,13 +364,13 @@
                                             {foreach $online_ips as $online_ip}
                                             <tr>
                                                 <td>
-                                                    <code>{$online_ip->ip()}</code>
+                                                    <code>{$online_ip->formatted_ip}</code>
                                                 </td>
                                                 <td>
-                                                    <span class="badge bg-blue-lt">{$online_ip->nodeName()}</span>
+                                                    <span class="badge bg-blue-lt">{$online_ip->node_name}</span>
                                                 </td>
                                                 <td class="text-secondary">
-                                                    <span class="text-nowrap">{$online_ip->last_time|date_format:'Y-m-d H:i:s'}</span>
+                                                    <span class="text-nowrap">{$online_ip->formatted_time}</span>
                                                 </td>
                                             </tr>
                                             {/foreach}
@@ -379,9 +382,9 @@
                                     <div class="empty-icon">
                                         <i class="ti ti-mood-sad icon"></i>
                                     </div>
-                                    <p class="empty-title">暂无在线记录</p>
+                                    <p class="empty-title">暂无在线连接</p>
                                     <p class="empty-subtitle text-secondary">
-                                        当您使用节点连接时，这里将显示您的在线IP
+                                        当您使用节点连接时，这里将显示最近90秒内活跃的在线IP
                                     </p>
                                 </div>
                                 {/if}
