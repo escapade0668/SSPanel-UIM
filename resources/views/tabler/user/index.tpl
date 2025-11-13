@@ -367,7 +367,7 @@
                                                     <span class="badge bg-blue-lt">{$online_ip->nodeName()}</span>
                                                 </td>
                                                 <td class="text-secondary">
-                                                    <span class="text-nowrap">{date('Y-m-d H:i:s', $online_ip->last_time)}</span>
+                                                    <span class="text-nowrap">{$online_ip->last_time|date_format:'Y-m-d H:i:s'}</span>
                                                 </td>
                                             </tr>
                                             {/foreach}
