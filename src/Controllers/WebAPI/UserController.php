@@ -255,8 +255,8 @@ final class UserController extends BaseController
                     'first_time' => time(),
                     'last_time' => time(),
                 ],
-                ['user_id', 'ip'],
-                ['node_id', 'last_time']
+                ['user_id', 'ip', 'node_id'],
+                ['last_time']
             );
         }
 
