@@ -212,8 +212,8 @@ final class UserController extends BaseController
         $user->is_admin = $request->getParam('is_admin') === 'true' ? 1 : 0;
         $user->is_shadow_banned = $request->getParam('is_shadow_banned') === 'true' ? 1 : 0;
         $user->is_banned = $request->getParam('is_banned') === 'true' ? 1 : 0;
-        $user->banned_reason = $request->getParam('banned_reason');
-        $user->remark = $request->getParam('remark');
+        $user->banned_reason = $request->getParam('banned_reason') ?? '';
+        $user->remark = $request->getParam('remark') ?? '';
 
         if (! $user->save()) {
             return $response->withJson([
