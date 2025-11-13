@@ -67,8 +67,10 @@ final class UserController extends BaseController
             ->get();
 
         foreach ($online_ips as $online_ip) {
+            $formatted_ip = $online_ip->ip();
             $online_ip->node_name = $online_ip->nodeName();
-            $online_ip->formatted_ip = $online_ip->ip();
+            $online_ip->formatted_ip = $formatted_ip;
+            $online_ip->location = Tools::getIpLocation($formatted_ip);
             $online_ip->formatted_time = Tools::toDateTime($online_ip->last_time);
         }
 

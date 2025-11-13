@@ -356,6 +356,7 @@
                                         <thead>
                                             <tr>
                                                 <th>IP地址</th>
+                                                <th>IP归属地</th>
                                                 <th>节点</th>
                                                 <th>最后在线</th>
                                             </tr>
@@ -365,6 +366,9 @@
                                             <tr>
                                                 <td>
                                                     <code>{$online_ip->formatted_ip}</code>
+                                                </td>
+                                                <td>
+                                                    <span class="text-secondary">{$online_ip->location}</span>
                                                 </td>
                                                 <td>
                                                     <span class="badge bg-blue-lt">{$online_ip->node_name}</span>
