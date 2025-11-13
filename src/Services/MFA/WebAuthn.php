@@ -225,8 +225,8 @@ final class WebAuthn
                     $publicKeyCredentialCreationOptions,
                     Tools::getSiteDomain(),
                 );
-            } catch (Exception) {
-                return ['ret' => 0, 'msg' => '验证失败'];
+            } catch (Exception $e) {
+                return ['ret' => 0, 'msg' => '验证失败: ' . $e->getMessage()];
             }
             // save public key credential source
             $jsonStr = self::getSerializer()->serialize($publicKeyCredentialSource, 'json');
