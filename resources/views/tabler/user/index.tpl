@@ -346,7 +346,7 @@
                                     在线IP列表
                                 </h3>
                                 <div class="card-subtitle">
-                                    <small class="text-secondary">仅显示90秒内活跃的连接</small>
+                                    <small class="text-secondary">仅显示5分钟内活跃的连接</small>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -384,7 +384,7 @@
                                     </div>
                                     <p class="empty-title">暂无在线连接</p>
                                     <p class="empty-subtitle text-secondary">
-                                        当您使用节点连接时，这里将显示最近90秒内活跃的在线IP
+                                        当您使用节点连接时，这里将显示最近5分钟内活跃的在线IP
                                     </p>
                                 </div>
                                 {/if}

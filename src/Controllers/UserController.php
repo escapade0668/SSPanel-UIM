@@ -60,9 +60,9 @@ final class UserController extends BaseController
             $r2Enabled
         );
 
-        // 获取当前用户在线IP列表（仅显示90秒内活跃的连接）
+        // 获取当前用户在线IP列表（仅显示5分钟内活跃的连接）
         $online_ips = (new \App\Models\OnlineLog())->where('user_id', $this->user->id)
-            ->where('last_time', '>', time() - 90)
+            ->where('last_time', '>', time() - 300)
             ->orderBy('last_time', 'desc')
             ->get();
 
