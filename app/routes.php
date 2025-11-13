@@ -203,6 +203,7 @@ return static function (Slim\App $app): void {
         $group->post('/user/create', App\Controllers\Admin\UserController::class . ':create');
         $group->delete('/user/{id}', App\Controllers\Admin\UserController::class . ':delete');
         $group->post('/user/ajax', App\Controllers\Admin\UserController::class . ':ajax');
+        $group->delete('/user/mfa/{device_id:[0-9]+}', App\Controllers\Admin\UserController::class . ':deleteMFADevice');
         // Coupon
         $group->get('/coupon', App\Controllers\Admin\CouponController::class . ':index');
         $group->post('/coupon', App\Controllers\Admin\CouponController::class . ':add');

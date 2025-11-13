@@ -222,14 +222,32 @@
                                     </label>
                                 </span>
                             </div>
-                            <div class="form-group mb-3 row">
-                                <span class="col">两步认证</span>
-                                <span class="col-auto">
-                                    <label class="form-check form-check-single form-switch">
-                                        <input id="ga_enable" class="form-check-input" type="checkbox"
-                                               {if $edit_user->ga_enable}checked="" {/if}>
-                                    </label>
-                                </span>
+                            <div class="form-group mb-3 col-12">
+                                <label class="form-label col-12 col-form-label">两步认证 (MFA) 设备</label>
+                                <div class="col">
+                                    {if $mfa_devices->count() > 0}
+                                        <div class="list-group list-group-flush">
+                                            {foreach $mfa_devices as $device}
+                                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <strong>{$device->name}</strong>
+                                                        <small class="text-muted d-block">类型: {$device->type} | 创建于: {$device->created_at}</small>
+                                                        {if $device->used_at}
+                                                            <small class="text-muted d-block">最后使用: {$device->used_at}</small>
+                                                        {/if}
+                                                    </div>
+                                                    <button class="btn btn-sm btn-danger" onclick="deleteMFADevice({$device->id})">
+                                                        <i class="ti ti-trash"></i> 删除
+                                                    </button>
+                                                </div>
+                                            {/foreach}
+                                        </div>
+                                    {else}
+                                        <div class="alert alert-info mb-0">
+                                            <i class="ti ti-info-circle"></i> 该用户未启用两步认证
+                                        </div>
+                                    {/if}
+                                </div>
                             </div>
                             <div class="form-group mb-3 row">
                                 <span class="col">账户异常状态（Shadow Banned）</span>
@@ -250,15 +268,13 @@
                             <div class="form-group mb-3 col-12">
                                 <span class="form-label col-12 col-form-label">手动封禁理由</span>
                                 <span class="col-auto">
-                                    <textarea id="banned_reason" class="form-control"
-                                              value="{$edit_user->banned_reason}"></textarea>
+                                    <textarea id="banned_reason" class="form-control">{$edit_user->banned_reason}</textarea>
                                 </span>
                             </div>
                             <div class="form-group mb-3 col-12">
                                 <label class="form-label col-12 col-form-label">账户备注</label>
                                 <div class="col">
-                                    <textarea id="remark" class="form-control" value="{$edit_user->remark}"
-                                              placeholder="仅管理员可见"></textarea>
+                                    <textarea id="remark" class="form-control" placeholder="仅管理员可见">{$edit_user->remark}</textarea>
                                 </div>
                             </div>
                         </div>
@@ -280,7 +296,6 @@
                 {$key}: $('#{$key}').val(),
                 {/foreach}
                 is_admin: $("#is_admin").is(":checked"),
-                ga_enable: $("#ga_enable").is(":checked"),
                 is_shadow_banned: $("#is_shadow_banned").is(":checked"),
                 is_banned: $("#is_banned").is(":checked"),
             },
@@ -296,6 +311,28 @@
             }
         })
     });
+
+    function deleteMFADevice(device_id) {
+        if (!confirm('确定要删除此 MFA 设备吗？')) {
+            return;
+        }
+        
+        $.ajax({
+            url: '/admin/user/mfa/' + device_id,
+            type: 'DELETE',
+            dataType: "json",
+            success: function (data) {
+                if (data.ret === 1) {
+                    $('#success-message').text(data.msg);
+                    $('#success-dialog').modal('show');
+                    window.setTimeout("location.reload()", {$config['jump_delay']});
+                } else {
+                    $('#fail-message').text(data.msg);
+                    $('#fail-dialog').modal('show');
+                }
+            }
+        });
+    }
 </script>
 
 {include file='admin/footer.tpl'}
