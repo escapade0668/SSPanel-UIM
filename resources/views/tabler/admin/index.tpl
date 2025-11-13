@@ -172,7 +172,7 @@
                 grid: {
                     strokeDashArray: 3,
                 },
-                colors: ["#0080FF", "#00FFFF", "#FF4500"],
+                colors: ["#206bc4", "#4299e1", "#f76707"],
                 legend: {
                     show: true,
                     position: 'bottom',
@@ -212,7 +212,7 @@
                 grid: {
                     strokeDashArray: 2,
                 },
-                colors: ["#BFFF00", "#FF0000"],
+                colors: ["#2fb344", "#d63939"],
                 legend: {
                     show: true,
                     position: 'bottom',
@@ -252,7 +252,7 @@
                 grid: {
                     strokeDashArray: 4,
                 },
-                colors: ["#FFFF00", "#BFFF00"],
+                colors: ["#f59f00", "#74b816"],
                 legend: {
                     show: true,
                     position: 'bottom',
@@ -292,7 +292,7 @@
                 grid: {
                     strokeDashArray: 3,
                 },
-                colors: ["#00FF00", "#BFFF00", "#FFFF00"],
+                colors: ["#2fb344", "#20c997", "#fab005"],
                 legend: {
                     show: true,
                     position: 'bottom',
