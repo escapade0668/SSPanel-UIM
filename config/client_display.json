@@ -73,6 +73,17 @@
           "storeUrl": "https://apps.apple.com/us/app/clash-mi/id6744321968"
         }
       }
+    },
+    {
+      "name": "Stash",
+      "description": "iOS 平台强大的网络工具",
+      "format": "stash",
+      "importUrl": "stash://install-config?url={sub}/stash&name={name}",
+      "platforms": {
+        "iOS": {
+          "storeUrl": "https://apps.apple.com/app/stash/id1596063349"
+        }
+      }
     }
   ],
   "icons": {

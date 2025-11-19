@@ -12,6 +12,7 @@ use App\Services\Subscribe\SingBox;
 use App\Services\Subscribe\SIP002;
 use App\Services\Subscribe\SIP008;
 use App\Services\Subscribe\SS;
+use App\Services\Subscribe\Stash;
 use App\Services\Subscribe\Trojan;
 use App\Services\Subscribe\V2Ray;
 use App\Services\Subscribe\V2RayJson;
@@ -61,7 +62,7 @@ final class Subscribe
         return self::getClient($type)->getContent($user);
     }
 
-    public static function getClient(string $type): Json|SS|SIP002|V2Ray|Trojan|Clash|SIP008|SingBox|V2RayJson
+    public static function getClient(string $type): Json|SS|SIP002|V2Ray|Trojan|Clash|Stash|SIP008|SingBox|V2RayJson
     {
         return match ($type) {
             'ss' => new SS(),
@@ -69,6 +70,7 @@ final class Subscribe
             'v2ray' => new V2Ray(),
             'trojan' => new Trojan(),
             'clash' => new Clash(),
+            'stash' => new Stash(),
             'sip008' => new SIP008(),
             'singbox' => new SingBox(),
             'v2rayjson' => new V2RayJson(),
