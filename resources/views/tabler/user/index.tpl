@@ -178,6 +178,8 @@
                             <h3 class="card-title">快速配置</h3>
                         </div>
                         <div class="card-body">
+                            {* 订阅地址已隐藏 *}
+                            {*
                             <div class="mb-4">
                                 <h4 class="mb-3">
                                     <i class="ti ti-link"></i> 您的专属订阅地址
@@ -192,6 +194,7 @@
                                     <small>此订阅地址适用于所有客户端，请妥善保管</small>
                                 </p>
                             </div>
+                            *}
 
                             <div class="recommended-section p-3 bg-primary-lt rounded mb-3">
                                 <h4 class="mb-3">
