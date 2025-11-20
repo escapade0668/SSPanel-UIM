@@ -217,7 +217,7 @@
                             </div>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="https://doc-burst.xjj.jp/" target="_blank">
+                            <a class="nav-link" href="https://sanas-organization-3.gitbook.io/untitled/" target="_blank">
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
                                     <i class="ti ti-book icon"></i>
                                 </span>
