@@ -16,9 +16,9 @@ final class Stash extends Base
     public function getContent($user): string
     {
         $nodes = [];
-        $clash_config = $_ENV['Clash_Config'];
-        $clash_group_indexes = $_ENV['Clash_Group_Indexes'];
-        $clash_group_config = $_ENV['Clash_Group_Config'];
+        $stash_config = $_ENV['Stash_Config'];
+        $stash_group_indexes = $_ENV['Stash_Group_Indexes'];
+        $stash_group_config = $_ENV['Stash_Group_Config'];
         $nodes_raw = Subscribe::getUserNodes($user);
 
         foreach ($nodes_raw as $node_raw) {
@@ -173,17 +173,19 @@ final class Stash extends Base
 
             $nodes[] = $node;
 
-            foreach ($clash_group_indexes as $index) {
-                $clash_group_config['proxy-groups'][$index]['proxies'][] = $node_raw->name;
+            foreach ($stash_group_indexes as $index) {
+                $stash_group_config['proxy-groups'][$index]['proxies'][] = $node_raw->name;
             }
         }
 
-        $clash_nodes = [
+        $stash_nodes = [
+
+
             'proxies' => $nodes,
         ];
 
         return yaml_emit(
-            array_merge($clash_config, $clash_nodes, $clash_group_config),
+            array_merge($stash_config, $stash_nodes, $stash_group_config),
             YAML_UTF8_ENCODING
         );
     }
