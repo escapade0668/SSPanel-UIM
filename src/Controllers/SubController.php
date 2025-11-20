@@ -68,7 +68,7 @@ final class SubController extends BaseController
         . '; total=' . $user->transfer_enable
         . '; expire=' . strtotime($user->class_expire);
         // Clash specific
-        $sub_content_disposition = 'attachment; filename=' . $_ENV['appName'];
+        $sub_content_disposition = 'attachment; filename="' . $_ENV['appName'] . '"; filename*=UTF-8\'\'' . rawurlencode($_ENV['appName']);
         $sub_profile_update_interval = 6;
         $sub_profile_web_page_url = $_ENV['baseUrl'];
 
