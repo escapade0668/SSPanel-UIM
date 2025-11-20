@@ -179,6 +179,8 @@ final class Stash extends Base
         }
 
         $stash_nodes = [
+
+
             'proxies' => $nodes,
         ];
 
