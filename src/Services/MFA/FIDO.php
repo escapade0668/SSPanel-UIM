@@ -71,8 +71,8 @@ final class FIDO
                 $publicKeyCredentialCreationOptions,
                 Tools::getSiteDomain()
             );
-        } catch (Exception) {
-            return ['ret' => 0, 'msg' => '验证失败'];
+        } catch (Exception $e) {
+            return ['ret' => 0, 'msg' => '验证失败: ' . $e->getMessage()];
         }
         $jsonStr = WebAuthn::getSerializer()->serialize($publicKeyCredentialSource, 'json');
         $jsonObject = json_decode($jsonStr);
