@@ -6,6 +6,7 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\AuthController;
 use App\Controllers\BaseController;
+use App\Services\Auth;
 use App\Models\Config;
 use App\Models\MFADevice;
 use App\Models\User;
@@ -257,7 +258,9 @@ final class UserController extends BaseController
         foreach ($users as $user) {
             $user->op = '<button class="btn btn-red" id="delete-user-' . $user->id . '" 
             onclick="deleteUser(' . $user->id . ')">删除</button>
-            <a class="btn btn-primary" href="/admin/user/' . $user->id . '/edit">编辑</a>';
+            <a class="btn btn-primary" href="/admin/user/' . $user->id . '/edit">编辑</a>
+            <a class="btn btn-success" href="/admin/user/' . $user->id . '/switch">
+            <i class="ti ti-switch-horizontal"></i> 切换</a>';
             $user->transfer_enable = $user->enableTraffic();
             $user->transfer_used = $user->usedTraffic();
             $user->is_admin = $user->is_admin === 1 ? '是' : '否';
@@ -293,5 +296,60 @@ final class UserController extends BaseController
             'ret' => 1,
             'msg' => '删除成功',
         ]);
+    }
+
+    /**
+     * 管理员切换到用户界面
+     */
+    public function switchToUser(ServerRequest $request, Response $response, array $args): ResponseInterface
+    {
+        $target_user_id = (int) $args['id'];
+        $target_user = (new User())->find($target_user_id);
+
+        if ($target_user === null) {
+            return $response->withJson([
+                'ret' => 0,
+                'msg' => '用户不存在',
+            ]);
+        }
+
+        // 保存当前管理员的 ID 到 cookie，以便返回
+        $admin_id = $this->user->id;
+        $expire_in = time() + 3600; // 1小时后过期
+
+        setcookie('admin_uid', (string) $admin_id, $expire_in, path: '/', secure: true, httponly: true);
+
+        // 以目标用户身份登录
+        Auth::login($target_user_id, 3600);
+
+        return $response->withStatus(302)->withHeader('Location', '/user');
+    }
+
+    /**
+     * 从用户界面返回管理员界面
+     */
+    public static function switchBackToAdmin(ServerRequest $request, Response $response, array $args): ResponseInterface
+    {
+        $admin_uid = $_COOKIE['admin_uid'] ?? null;
+
+        if ($admin_uid === null) {
+            return $response->withStatus(302)->withHeader('Location', '/user');
+        }
+
+        $admin_user = (new User())->find((int) $admin_uid);
+
+        if ($admin_user === null || $admin_user->is_admin !== 1) {
+            // 清除 cookie 并返回用户界面
+            setcookie('admin_uid', '', time() - 3600, path: '/', secure: true, httponly: true);
+            return $response->withStatus(302)->withHeader('Location', '/user');
+        }
+
+        // 清除 admin_uid cookie
+        setcookie('admin_uid', '', time() - 3600, path: '/', secure: true, httponly: true);
+
+        // 以管理员身份重新登录
+        Auth::login((int) $admin_uid, 3600 * 24);
+
+        return $response->withStatus(302)->withHeader('Location', '/admin/user');
     }
 }
