@@ -30,6 +30,7 @@ final class CouponController extends BaseController
             'use_time' => '使用次数（每用户）',
             'total_use_time' => '使用次数（累计）',
             'new_user' => '仅限新用户使用',
+            'no_balance_pay' => '禁止余额支付',
             'disabled' => '已禁用',
             'use_count' => '总使用次数',
             'create_time' => '创建时间',
@@ -85,6 +86,15 @@ final class CouponController extends BaseController
                 ],
             ],
             [
+                'id' => 'no_balance_pay',
+                'info' => '禁止使用余额支付',
+                'type' => 'select',
+                'select' => [
+                    '0' => '允许',
+                    '1' => '禁止',
+                ],
+            ],
+            [
                 'id' => 'generate_method',
                 'info' => '生成方式',
                 'type' => 'select',
@@ -123,6 +133,7 @@ final class CouponController extends BaseController
         $use_time = $request->getParam('use_time');
         $total_use_time = $request->getParam('total_use_time');
         $new_user = $request->getParam('new_user');
+        $no_balance_pay = $request->getParam('no_balance_pay');
         $generate_method = $request->getParam('generate_method');
         $expire_time = $request->getParam('expire_time');
 
@@ -179,6 +190,7 @@ final class CouponController extends BaseController
             'use_time' => $use_time,
             'total_use_time' => $total_use_time,
             'new_user' => $new_user,
+            'no_balance_pay' => (int) $no_balance_pay,
             'disabled' => 0,
         ];
 
@@ -252,6 +264,7 @@ final class CouponController extends BaseController
             $coupon->total_use_time = ! property_exists($limit, 'total_use_time') ||
             (int) $limit->total_use_time < 0 ? '不限次数' : $limit->total_use_time;
             $coupon->new_user = $limit->new_user === 1 ? '是' : '否';
+            $coupon->no_balance_pay = property_exists($limit, 'no_balance_pay') && $limit->no_balance_pay === 1 ? '是' : '否';
             $coupon->disabled = $limit->disabled === 1 ? '是' : '否';
             $coupon->create_time = Tools::toDateTime((int) $coupon->create_time);
             $coupon->expire_time = $coupon->expire_time === 0 ? '永久有效' : Tools::toDateTime((int) $coupon->expire_time);

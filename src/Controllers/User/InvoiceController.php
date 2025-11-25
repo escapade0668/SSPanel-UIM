@@ -6,8 +6,10 @@ namespace App\Controllers\User;
 
 use App\Controllers\BaseController;
 use App\Models\Invoice;
+use App\Models\Order;
 use App\Models\Paylist;
 use App\Models\UserMoneyLog;
+use App\Services\Coupon;
 use App\Services\Payment;
 use App\Utils\Tools;
 use Exception;
@@ -108,6 +110,18 @@ final class InvoiceController extends BaseController
                 'ret' => 0,
                 'msg' => '该账单不支持使用余额支付',
             ]);
+        }
+
+        // 检查订单使用的优惠码是否允许余额支付
+        if ($invoice->order_id !== null && $invoice->order_id > 0) {
+            $order = (new Order())->find($invoice->order_id);
+
+            if ($order !== null && $order->coupon !== '' && ! Coupon::checkBalancePayAllowed($order->coupon)) {
+                return $response->withJson([
+                    'ret' => 0,
+                    'msg' => '使用的优惠码不支持余额支付，请使用其他支付方式',
+                ]);
+            }
         }
 
         // 组合支付

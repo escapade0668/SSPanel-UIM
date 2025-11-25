@@ -172,5 +172,43 @@ final class Coupon
             $this->coupon->save();
         }
     }
+
+    /**
+     * 检查优惠码是否允许余额支付
+     */
+    public function isBalancePayAllowed(): bool
+    {
+        if ($this->coupon === null) {
+            return true;
+        }
+
+        $limit = json_decode($this->coupon->limit);
+
+        return ! (property_exists($limit, 'no_balance_pay') && (int) $limit->no_balance_pay === 1);
+    }
+
+    /**
+     * 通过优惠码字符串检查是否允许余额支付
+     *
+     * @param string $couponCode 优惠码
+     *
+     * @return bool 是否允许余额支付
+     */
+    public static function checkBalancePayAllowed(string $couponCode): bool
+    {
+        if ($couponCode === '') {
+            return true;
+        }
+
+        $coupon = (new UserCoupon())->where('code', $couponCode)->first();
+
+        if ($coupon === null) {
+            return true;
+        }
+
+        $limit = json_decode($coupon->limit);
+
+        return ! (property_exists($limit, 'no_balance_pay') && (int) $limit->no_balance_pay === 1);
+    }
 }
 
