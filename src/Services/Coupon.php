@@ -126,8 +126,8 @@ final class Coupon
             $this->discount = (float) $content->value;
         }
 
-        // 确保折扣不超过商品价格（防止负数价格）
-        $this->discount = max(0, min($this->discount, $this->product->price));
+        // 确保折扣不超过商品价格（防止负数价格），并保留两位小数
+        $this->discount = round(max(0, min($this->discount, $this->product->price)), 2);
     }
 
     /**
@@ -151,7 +151,7 @@ final class Coupon
      */
     public function getFinalPrice(): float
     {
-        return max(0, $this->product->price - $this->discount);
+        return round(max(0, $this->product->price - $this->discount), 2);
     }
 
     /**
