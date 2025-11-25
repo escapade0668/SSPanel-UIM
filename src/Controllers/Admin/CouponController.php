@@ -87,7 +87,7 @@ final class CouponController extends BaseController
             ],
             [
                 'id' => 'no_balance_pay',
-                'info' => '禁止使用余额支付',
+                'info' => '使用余额支付',
                 'type' => 'select',
                 'select' => [
                     '0' => '允许',
