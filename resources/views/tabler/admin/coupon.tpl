@@ -199,8 +199,8 @@
                     dataType: "json",
                     success: function (data) {
                         if (data.ret === 1) {
-                            $('#success-dialog').text(data.msg);
-                            $('#success-message').modal('show');
+                            $('#success-message').text(data.msg);
+                            $('#success-dialog').modal('show');
                             reloadTableAjax();
                         } else {
                             $('#fail-message').text(data.msg);
