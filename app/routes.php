@@ -109,6 +109,8 @@ return static function (Slim\App $app): void {
         $group->get('/clients/{name}', App\Controllers\User\ClientController::class . ':getClients');
         // 登出
         $group->get('/logout', App\Controllers\UserController::class . ':logout');
+        // 返回管理员界面
+        $group->get('/switch_back_admin', App\Controllers\Admin\UserController::class . ':switchBackToAdmin');
     })->add(new User());
 
     $app->group('/payment', static function (RouteCollectorProxy $group): void {
@@ -204,6 +206,7 @@ return static function (Slim\App $app): void {
         $group->delete('/user/{id}', App\Controllers\Admin\UserController::class . ':delete');
         $group->post('/user/ajax', App\Controllers\Admin\UserController::class . ':ajax');
         $group->delete('/user/mfa/{device_id:[0-9]+}', App\Controllers\Admin\UserController::class . ':deleteMFADevice');
+        $group->get('/user/{id:[0-9]+}/switch', App\Controllers\Admin\UserController::class . ':switchToUser');
         // Coupon
         $group->get('/coupon', App\Controllers\Admin\CouponController::class . ':index');
         $group->post('/coupon', App\Controllers\Admin\CouponController::class . ':add');

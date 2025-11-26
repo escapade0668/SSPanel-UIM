@@ -43,6 +43,14 @@
                      class="navbar-brand-image" style="filter: none;">
             </h1>
             <div class="navbar-nav flex-row order-md-last">
+                {if isset($smarty.cookies.admin_uid) && $smarty.cookies.admin_uid}
+                <div class="nav-item me-3">
+                    <a href="/user/switch_back_admin" class="btn btn-warning btn-sm">
+                        <i class="ti ti-arrow-back"></i>
+                        返回管理员
+                    </a>
+                </div>
+                {/if}
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown"
                        aria-label="Open user menu">
