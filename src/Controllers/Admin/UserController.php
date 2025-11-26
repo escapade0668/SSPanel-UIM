@@ -299,6 +299,11 @@ final class UserController extends BaseController
     }
 
     /**
+     * 需要保存/还原的认证 cookie 名称
+     */
+    private static array $authCookieNames = ['uid', 'email', 'key', 'ip', 'device', 'expire_in'];
+
+    /**
      * 管理员切换到用户界面
      */
     public function switchToUser(ServerRequest $request, Response $response, array $args): ResponseInterface
@@ -313,11 +318,12 @@ final class UserController extends BaseController
             ]);
         }
 
-        // 保存当前管理员的 ID 到 cookie，以便返回
-        $admin_id = $this->user->id;
+        // 保存当前管理员的所有认证 cookie（加 admin_ 前缀）
         $expire_in = time() + 3600; // 1小时后过期
-
-        setcookie('admin_uid', (string) $admin_id, $expire_in, path: '/', secure: true, httponly: true);
+        foreach (self::$authCookieNames as $name) {
+            $value = $_COOKIE[$name] ?? '';
+            setcookie('admin_' . $name, $value, $expire_in, path: '/', secure: true, httponly: true);
+        }
 
         // 以目标用户身份登录
         Auth::login($target_user_id, 3600);
@@ -326,29 +332,41 @@ final class UserController extends BaseController
     }
 
     /**
+     * 清除管理员切换相关的 cookie
+     */
+    private static function clearAdminSwitchCookies(): void
+    {
+        foreach (self::$authCookieNames as $name) {
+            setcookie('admin_' . $name, '', time() - 3600, path: '/', secure: true, httponly: true);
+        }
+    }
+
+    /**
      * 从用户界面返回管理员界面
      */
     public static function switchBackToAdmin(ServerRequest $request, Response $response, array $args): ResponseInterface
     {
+        // 检查是否有保存的管理员 cookie
         $admin_uid = $_COOKIE['admin_uid'] ?? null;
-
         if ($admin_uid === null) {
             return $response->withStatus(302)->withHeader('Location', '/user');
         }
 
-        $admin_user = (new User())->find((int) $admin_uid);
-
-        if ($admin_user === null || $admin_user->is_admin !== 1) {
-            // 清除 cookie 并返回用户界面
-            setcookie('admin_uid', '', time() - 3600, path: '/', secure: true, httponly: true);
+        // 还原管理员的认证 cookie
+        $admin_expire_in = (int) ($_COOKIE['admin_expire_in'] ?? 0);
+        if ($admin_expire_in < time()) {
+            // 已过期，清除并返回
+            self::clearAdminSwitchCookies();
             return $response->withStatus(302)->withHeader('Location', '/user');
         }
 
-        // 清除 admin_uid cookie
-        setcookie('admin_uid', '', time() - 3600, path: '/', secure: true, httponly: true);
+        foreach (self::$authCookieNames as $name) {
+            $value = $_COOKIE['admin_' . $name] ?? '';
+            setcookie($name, $value, $admin_expire_in, path: '/', secure: true, httponly: true);
+        }
 
-        // 以管理员身份重新登录
-        Auth::login((int) $admin_uid, 3600 * 24);
+        // 清除 admin_ 前缀的临时 cookie
+        self::clearAdminSwitchCookies();
 
         return $response->withStatus(302)->withHeader('Location', '/admin/user');
     }
