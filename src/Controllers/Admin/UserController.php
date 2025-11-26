@@ -12,6 +12,7 @@ use App\Models\MFADevice;
 use App\Models\User;
 use App\Models\UserMoneyLog;
 use App\Services\I18n;
+use App\Utils\Cookie as CookieUtils;
 use App\Utils\Hash;
 use App\Utils\Tools;
 use Exception;
@@ -320,10 +321,11 @@ final class UserController extends BaseController
 
         // 保存当前管理员的所有认证 cookie（加 admin_ 前缀）
         $expire_in = time() + 3600; // 1小时后过期
+        $admin_cookies = [];
         foreach (self::$authCookieNames as $name) {
-            $value = $_COOKIE[$name] ?? '';
-            setcookie('admin_' . $name, $value, $expire_in, path: '/', secure: true, httponly: true);
+            $admin_cookies['admin_' . $name] = $_COOKIE[$name] ?? '';
         }
+        CookieUtils::setWithDomain($admin_cookies, $expire_in, $_SERVER['HTTP_HOST']);
 
         // 以目标用户身份登录
         Auth::login($target_user_id, 3600);
@@ -336,9 +338,11 @@ final class UserController extends BaseController
      */
     private static function clearAdminSwitchCookies(): void
     {
+        $clear_cookies = [];
         foreach (self::$authCookieNames as $name) {
-            setcookie('admin_' . $name, '', time() - 3600, path: '/', secure: true, httponly: true);
+            $clear_cookies['admin_' . $name] = '';
         }
+        CookieUtils::setWithDomain($clear_cookies, 0, $_SERVER['HTTP_HOST']);
     }
 
     /**
@@ -362,10 +366,11 @@ final class UserController extends BaseController
         }
 
         // 还原管理员的认证 cookie
+        $restore_cookies = [];
         foreach (self::$authCookieNames as $name) {
-            $value = $_COOKIE['admin_' . $name] ?? '';
-            setcookie($name, $value, $admin_expire_in, path: '/', secure: true, httponly: true);
+            $restore_cookies[$name] = $_COOKIE['admin_' . $name] ?? '';
         }
+        CookieUtils::setWithDomain($restore_cookies, $admin_expire_in, $_SERVER['HTTP_HOST']);
 
         // 清除 admin_ 前缀的临时 cookie
         self::clearAdminSwitchCookies();
