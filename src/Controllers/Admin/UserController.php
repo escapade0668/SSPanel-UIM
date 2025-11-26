@@ -352,14 +352,16 @@ final class UserController extends BaseController
             return $response->withStatus(302)->withHeader('Location', '/user');
         }
 
-        // 还原管理员的认证 cookie
+        // 检查管理员的认证 cookie 是否过期
         $admin_expire_in = (int) ($_COOKIE['admin_expire_in'] ?? 0);
         if ($admin_expire_in < time()) {
-            // 已过期，清除并返回
+            // 管理员 cookie 已过期，清除所有 cookie 并跳转到登录页
             self::clearAdminSwitchCookies();
-            return $response->withStatus(302)->withHeader('Location', '/user');
+            Auth::logout();
+            return $response->withStatus(302)->withHeader('Location', '/auth/login');
         }
 
+        // 还原管理员的认证 cookie
         foreach (self::$authCookieNames as $name) {
             $value = $_COOKIE['admin_' . $name] ?? '';
             setcookie($name, $value, $admin_expire_in, path: '/', secure: true, httponly: true);
