@@ -93,6 +93,7 @@ return static function (Slim\App $app): void {
         $group->get('/order/create', App\Controllers\User\OrderController::class . ':create');
         $group->post('/order/create', App\Controllers\User\OrderController::class . ':process');
         $group->get('/order/{id:[0-9]+}/view', App\Controllers\User\OrderController::class . ':detail');
+        $group->post('/order/{id:[0-9]+}/activate', App\Controllers\User\OrderController::class . ':activate');
         $group->post('/order/ajax', App\Controllers\User\OrderController::class . ':ajax');
         // 账单页面
         $group->get('/invoice', App\Controllers\User\InvoiceController::class . ':index');

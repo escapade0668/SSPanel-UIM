@@ -67,6 +67,29 @@
             table.ajax.reload(null, false);
         }
 
+        function activateOrder(orderId) {
+            if (!confirm('确定要立即激活此订单吗？\n\n注意：激活后时间将从现在开始计算，流量将被重置为订单中的流量值。')) {
+                return;
+            }
+
+            $.ajax({
+                url: '/user/order/' + orderId + '/activate',
+                type: 'POST',
+                dataType: 'json',
+                success: function(data) {
+                    if (data.ret === 1) {
+                        alert(data.msg);
+                        reloadTableAjax();
+                    } else {
+                        alert(data.msg);
+                    }
+                },
+                error: function() {
+                    alert('请求失败，请稍后重试');
+                }
+            });
+        }
+
         loadTable();
     </script>
 

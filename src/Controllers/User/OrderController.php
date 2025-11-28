@@ -11,6 +11,7 @@ use App\Models\Product;
 use App\Services\Coupon;
 use App\Utils\Cookie;
 use App\Utils\Tools;
+use DateTime;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Response;
@@ -290,6 +291,83 @@ final class OrderController extends BaseController
         return $response->withHeader('HX-Redirect', '/user/invoice/' . $invoice->id . '/view');
     }
 
+    public function activate(ServerRequest $request, Response $response, array $args): ResponseInterface
+    {
+        $id = $this->antiXss->xss_clean($args['id']);
+        $user = $this->user;
+
+        $order = (new Order())->where('user_id', $user->id)
+            ->where('id', $id)
+            ->where('status', 'pending_activation')
+            ->first();
+
+        if ($order === null) {
+            return $response->withJson([
+                'ret' => 0,
+                'msg' => '订单不存在或状态不正确',
+            ]);
+        }
+
+        $content = json_decode($order->product_content);
+        $productType = $order->product_type;
+
+        switch ($productType) {
+            case 'tabp':
+                // 时间流量包：重置流量，从当前时间开始计算
+                $user->u = 0;
+                $user->d = 0;
+                $user->transfer_today = 0;
+                $user->transfer_enable = Tools::gbToB($content->bandwidth);
+                $user->class = $content->class;
+                $user->class_expire = (new DateTime())
+                    ->modify('+' . $content->class_time . ' days')->format('Y-m-d H:i:s');
+                $user->node_group = $content->node_group;
+                $user->node_speedlimit = $content->speed_limit;
+                $user->node_iplimit = $content->ip_limit;
+                $user->save();
+                break;
+
+            case 'bandwidth':
+                // 流量包：增加流量
+                $user->transfer_enable += Tools::gbToB($content->bandwidth);
+                $user->save();
+                break;
+
+            case 'time':
+                // 时间包：从当前时间开始延长（而非在原有基础上叠加）
+                $user->class = $content->class;
+                $user->class_expire = (new DateTime())
+                    ->modify('+' . $content->class_time . ' days')->format('Y-m-d H:i:s');
+                $user->node_group = $content->node_group;
+                $user->node_speedlimit = $content->speed_limit;
+                $user->node_iplimit = $content->ip_limit;
+                $user->save();
+                break;
+
+            case 'topup':
+                // 充值：增加余额
+                $user->money += $content->amount;
+                $user->save();
+                break;
+
+            default:
+                return $response->withJson([
+                    'ret' => 0,
+                    'msg' => '未知的商品类型',
+                ]);
+        }
+
+        // 更新订单状态
+        $order->status = 'activated';
+        $order->update_time = time();
+        $order->save();
+
+        return $response->withJson([
+            'ret' => 1,
+            'msg' => '订单已立即生效',
+        ]);
+    }
+
     public function ajax(ServerRequest $request, Response $response, array $args): ResponseInterface
     {
         $orders = (new Order())->orderBy('id', 'desc')->where('user_id', $this->user->id)->get();
@@ -301,6 +379,11 @@ final class OrderController extends BaseController
                 $invoice_id = (new Invoice())->where('order_id', $order->id)->first()->id;
                 $order->op .= '
                 <a class="btn btn-red" href="/user/invoice/' . $invoice_id . '/view">支付</a>';
+            }
+
+            if ($order->status === 'pending_activation') {
+                $order->op .= '
+                <button class="btn btn-green" onclick="activateOrder(' . $order->id . ')">立即生效</button>';
             }
 
             $order->product_type = $order->productType();
