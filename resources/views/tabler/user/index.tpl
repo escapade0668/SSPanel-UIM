@@ -291,6 +291,26 @@
 
                 <div class="col-lg-6 col-sm-12">
                     <div class="vstack">
+                        <div class="card mb-3">
+                            <div class="ribbon ribbon-top bg-yellow">
+                                <i class="ti ti-bell-ringing icon"></i>
+                            </div>
+                            <div class="card-body">
+                                <h3 class="card-title">
+                                    置顶公告
+                                    {if $ann !== null}
+                                    <span class="card-subtitle">{$ann->date}</span>
+                                    {/if}
+                                </h3>
+                                <p class="text-secondary mb-0">
+                                    {if $ann !== null}
+                                    {$ann->content}
+                                    {else}
+                                    暂无公告
+                                    {/if}
+                                </p>
+                            </div>
+                        </div>
                         <div class="card">
                             <div class="card-body">
                                 <h3 class="card-title">流量用量</h3>
@@ -352,11 +372,11 @@
                                     <small class="text-secondary">仅显示5分钟内活跃的连接</small>
                                 </div>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body p-0">
                                 {if $online_ips && count($online_ips) > 0}
-                                <div class="table-responsive">
-                                    <table class="table table-vcenter card-table">
-                                        <thead>
+                                <div class="table-responsive"{if count($online_ips) > 5} style="max-height: 240px; overflow-y: auto;"{/if}>
+                                    <table class="table table-vcenter card-table table-hover mb-0">
+                                        <thead{if count($online_ips) > 5} class="sticky-top bg-white" style="z-index: 1;"{/if}>
                                             <tr>
                                                 <th>IP地址</th>
                                                 <th>IP归属地</th>
@@ -447,28 +467,6 @@
                     </div>
                 </div>
                 {/if}
-                <div class="col-lg-6 col-sm-12">
-                    <div class="card">
-                        <div class="ribbon ribbon-top bg-yellow">
-                            <i class="ti ti-bell-ringing icon"></i>
-                        </div>
-                        <div class="card-body">
-                            <h3 class="card-title">
-                                置顶公告
-                                {if $ann !== null}
-                                <span class="card-subtitle">{$ann->date}</span>
-                                {/if}
-                            </h3>
-                            <p class="text-secondary">
-                                {if $ann !== null}
-                                {$ann->content}
-                                {else}
-                                暂无公告
-                                {/if}
-                            </p>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
