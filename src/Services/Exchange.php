@@ -32,7 +32,7 @@ final class Exchange
 
         if (! $rate) {
             $client = new Client();
-            $response = $client->get('https://cdn.moneyconvert.net/api/latest.json');
+            $response = $client->get('https://open.er-api.com/v6/latest/USD');
             $data = json_decode($response->getBody()->getContents(), true);
             $rate = $data['rates'][$to] / $data['rates'][$from];
             $redis->setex('exchange_rate:' . $from . '_' . $to, 3600, $rate);
