@@ -164,7 +164,7 @@ return static function (Slim\App $app): void {
         $group->get('/ticket', App\Controllers\Admin\TicketController::class . ':index');
         $group->post('/ticket', App\Controllers\Admin\TicketController::class . ':add');
         $group->get('/ticket/{id:[0-9]+}/view', App\Controllers\Admin\TicketController::class . ':detail');
-        $group->post('/ticket/{id:[0-9]+}/close', App\Controllers\Admin\TicketController::class . ':close');
+        $group->put('/ticket/{id:[0-9]+}/close', App\Controllers\Admin\TicketController::class . ':close');
         $group->post('/ticket/{id:[0-9]+}', App\Controllers\Admin\TicketController::class . ':reply');
         $group->post('/ticket/{id:[0-9]+}/llm_reply', App\Controllers\Admin\TicketController::class . ':llmReply');
         $group->delete('/ticket/{id:[0-9]+}', App\Controllers\Admin\TicketController::class . ':delete');
